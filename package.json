@@ -1,0 +1,11 @@
+{
+  "name": "NewProject",
+  "uuid": "f48f272f-cca7-447a-b0f8-24c8a536e6b3",
+  "version": "3.4.2",
+  "creator": {
+    "version": "3.4.2"
+  },
+  "dependencies": {
+    "@heroiclabs/nakama-js": "^2.3.0"
+  }
+}
