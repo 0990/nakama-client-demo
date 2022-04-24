@@ -5,7 +5,7 @@ const { ccclass, property } = _decorator;
 import { default as nakama } from "@heroiclabs/nakama-js";
 
 import { user } from "./data/userData";
-import { socketMgr } from "./data/socket";
+import { NKM } from "./nakama/nakama";
 
 /**
  * Predefined variables
@@ -46,44 +46,22 @@ export class main extends Component {
     async onClickBtnLogin(){
         console.log("onClickBtnLogin");
         console.log(nakama);
-        var useSSL = false; // Enable if server is run with an SSL certificate.
-        var client = new nakama.Client("defaultkey", "127.0.0.1", "7350", useSSL);
+       var useSSL = false; // Enable if server is run with an SSL certificate.
+       // var client = new nakama.Client("defaultkey", "127.0.0.1", "7350", useSSL);
         console.log(nakama);
-        console.log(client);
+       // console.log(client);
         console.log(this.username.textLabel.string);
+
+        var client = NKM.createClient("127.0.0.1", "7350", useSSL);
 
         var email = this.username.textLabel.string;
         var password = this.password.textLabel.string;
         console.log(email,password)
 
         try {
-            const session = await client.authenticateEmail(email, password);
-            console.info("session",session);
-
-            const account = await client.getAccount(session);
-            console.info(account)
-
-           // const socket = client.createSocket();
-
-           // var appearOnline = true;
-           // var connectionTimeout = 30;
-          //  await socket.connect(session, appearOnline, connectionTimeout);
-
-            const secure = false; // Enable if server is run with an SSL certificate
-            const trace = true;
-
-            const socket = client.createSocket(secure, trace);
-            socket.ondisconnect = (evt) => {
-                console.info("Disconnected", evt);
-            };
-    
-            const session1 = await socket.connect(session);
-            console.info("session1",session1)
-
-            socketMgr.Set(socket)
+            await NKM.auth("email",email,password);
+            var account = await NKM.getAccount();
             user.SetUserBase("account",account)
-            user.SetUserBase("session",session)
-            user.SetUserBase("socket",socket)
             this.loginSuccess()
         }
         catch (err) {

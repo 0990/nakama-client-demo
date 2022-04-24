@@ -3,8 +3,8 @@ import { _decorator, Component, Node,EditBox,Label, ScrollView } from 'cc';
 const { ccclass, property } = _decorator;
 
 import { user } from "./data/userData";
-import { socketMgr } from "./data/socket";
 import { default as nakama } from "@heroiclabs/nakama-js";
+import { NKM } from "./nakama/nakama";
 
 /**
  * Predefined variables
@@ -38,7 +38,7 @@ export class chat extends Component {
     private channel:nakama.channel;
 
     start () {
-        var socket = user.GetUserBase("socket");
+        var socket = NKM.socket;
         // [3]
         socket.onchannelmessage = (message) => {
             console.info("Message received from channel", message.channel_id);
@@ -49,7 +49,7 @@ export class chat extends Component {
     }
 
     async onClickBtnJoinRoom(){
-        var socket = socketMgr.Get();
+        var socket = NKM.socket;
         const type : number = 1;
         const roomname = this.roomname.textLabel.string;
         const persistence : boolean = false;
@@ -65,7 +65,7 @@ export class chat extends Component {
         try{
             var msg = this.chatmsg.textLabel.string;
             const chatMsg =JSON.parse(msg)
-            var socket = socketMgr.Get();
+            var socket = NKM.socket;
             socket.writeChatMessage(this.channel.id, chatMsg);
         }catch(err){
             console.log("Error JSON.parse",err);

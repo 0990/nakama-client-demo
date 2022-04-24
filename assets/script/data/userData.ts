@@ -4,7 +4,7 @@
  */
 
 export class UserData {
-    static UserBaseInfo: Map<string, any> = new Map();
+     static UserBaseInfo: Map<string, any> = new Map();
 
     /**查找用户信息 */
     static GetUserBase(key) {
