@@ -16,8 +16,8 @@ import { user } from "./data/userData";
  *
  */
  
-@ccclass('login')
-export class login extends Component {
+@ccclass('lobby')
+export class lobby extends Component {
     // [1]
     // dummy = '';
 
@@ -30,20 +30,15 @@ export class login extends Component {
     async start() {
         var account = user.GetUserBase("account")
         console.log(account.email)
-        this.username.string = account.email+"_"+account.user.username
-
-        var socket = user.GetUserBase("socket")
-        var sess = user.GetUserBase("session")
-        socket.ondisconnect = (evt) => {
-            console.info("Disconnected", evt);
-        };
-
-        const session = await socket.connect(sess);
-
+        this.username.string = account.email+"_"+account.user.username;
     }
 
     async onLoad(){
 
+    }
+
+    onClickBtnToChatScene(){
+        director.loadScene("chat");
     }
 
 

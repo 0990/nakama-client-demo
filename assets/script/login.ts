@@ -5,6 +5,7 @@ const { ccclass, property } = _decorator;
 import { default as nakama } from "@heroiclabs/nakama-js";
 
 import { user } from "./data/userData";
+import { socketMgr } from "./data/socket";
 
 /**
  * Predefined variables
@@ -57,15 +58,29 @@ export class main extends Component {
 
         try {
             const session = await client.authenticateEmail(email, password);
-            console.info(session);
+            console.info("session",session);
 
             const account = await client.getAccount(session);
             console.info(account)
 
+           // const socket = client.createSocket();
+
+           // var appearOnline = true;
+           // var connectionTimeout = 30;
+          //  await socket.connect(session, appearOnline, connectionTimeout);
+
             const secure = false; // Enable if server is run with an SSL certificate
-            const trace = false;
+            const trace = true;
 
             const socket = client.createSocket(secure, trace);
+            socket.ondisconnect = (evt) => {
+                console.info("Disconnected", evt);
+            };
+    
+            const session1 = await socket.connect(session);
+            console.info("session1",session1)
+
+            socketMgr.Set(socket)
             user.SetUserBase("account",account)
             user.SetUserBase("session",session)
             user.SetUserBase("socket",socket)
