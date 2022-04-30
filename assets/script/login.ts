@@ -1,5 +1,5 @@
 
-import { _decorator, Component, Node, EditBox,director,Label} from 'cc';
+import { _decorator, Component, Node, EditBox,director,Label,ToggleContainer} from 'cc';
 const { ccclass, property } = _decorator;
 
 import { default as nakama } from "@heroiclabs/nakama-js";
@@ -28,11 +28,15 @@ export class main extends Component {
     // @property
     // serializableDummy = 0;
     @property({type: EditBox})
-    public username: EditBox | null = null;
+    public email: EditBox | null = null;
     @property({type: EditBox})
     public password: EditBox | null = null;
+    @property({type: EditBox})
+    public username: EditBox | null = null;
     @property({type: Label})
     public showTip: Label | null = null;
+    @property({type: ToggleContainer})
+    public loginTypeTG:ToggleContainer |null = null;
 
     start () {
         // [3]
@@ -40,7 +44,7 @@ export class main extends Component {
     }
 
     async onLoad(){
-
+        this.getLoginType();
     }
 
     async onClickBtnLogin(){
@@ -48,18 +52,32 @@ export class main extends Component {
         console.log(nakama);
        var useSSL = false; // Enable if server is run with an SSL certificate.
        // var client = new nakama.Client("defaultkey", "127.0.0.1", "7350", useSSL);
-        console.log(nakama);
+       // console.log(nakama);
        // console.log(client);
-        console.log(this.username.textLabel.string);
+       // console.log(this.username.textLabel.string);
 
         var client = NKM.createClient("127.0.0.1", "7350", useSSL);
 
-        var email = this.username.textLabel.string;
+        var email = this.email.textLabel.string;
         var password = this.password.textLabel.string;
-        console.log(email,password)
+        var username = this.username.textLabel.string;
+        console.log(email,password,username);
+
 
         try {
-            await NKM.auth("email",email,password);
+            const loginType = this.getLoginType();
+            switch(loginType){
+                case "email":
+                    await NKM.authEmail(email,password,username);
+                    break
+                case "id":
+                    await NKM.authDeviceId(email,username);
+                    break
+                default:
+                this.tip("不支持的登录方式");
+            }
+
+            
             var account = await NKM.getAccount();
             user.SetUserBase("account",account)
             this.loginSuccess()
@@ -70,12 +88,26 @@ export class main extends Component {
         }
     }
 
+    getLoginType(){
+        var loginType = "email";
+        this.loginTypeTG.toggleItems.forEach(toggle=>{
+            if (toggle.isChecked){
+                loginType = toggle.node.getChildByName("Label").getComponent("cc.Label").string;
+            }
+        })
+        return loginType;
+    }
+
     loginSuccess(){
         director.loadScene("lobby")
     }
 
     loginFail(){
-        this.showTip.string = "登录失败，请重试！"
+        this.tip("登录失败，请重试！")
+    }
+
+    tip(tip:string){
+        this.showTip.string = tip;
         this.scheduleOnce(function() {
             this.showTip.string = ""
         }, 1);

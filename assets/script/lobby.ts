@@ -28,9 +28,8 @@ export class lobby extends Component {
     username: Label = null;
 
     async start() {
-        var account = user.GetUserBase("account")
-        console.log(account.email)
-        this.username.string = account.email+"_"+account.user.username;
+        var account = user.GetUserBase("account");
+        this.username.string = account.user.username;
     }
 
     async onLoad(){
@@ -39,6 +38,10 @@ export class lobby extends Component {
 
     onClickBtnToChatScene(){
         director.loadScene("chat");
+    }
+
+    onClickBtnToFriendScene(){
+        director.loadScene("friend");
     }
 
 

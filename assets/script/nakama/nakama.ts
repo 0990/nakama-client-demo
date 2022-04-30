@@ -18,8 +18,14 @@ export class NakamaInstance {
         await this.checkSessionAndAuth()
     }
 
-    static async auth(authType,username,password){
-        await this.createSession(authType,username,password);
+    
+    static async authEmail(email,password,username){
+        this.session = await this.client.authenticateEmail(email, password,true,username);
+        await this.establishSocketConnection();
+    }
+
+    static async authDeviceId(deviceId,username){
+        this.session = await this.client.authenticateDevice(deviceId,true,username);
         await this.establishSocketConnection();
     }
 
@@ -39,11 +45,6 @@ export class NakamaInstance {
                 console.info("Disconnected", evt);
         };
         await this.socket.connect(this.session,true)
-    }
-
-    static async createSession(authType,username,password){
-        this.session = await this.client.authenticateEmail(username, password);
-        return this.session
     }
 
     static async getAccount(){
