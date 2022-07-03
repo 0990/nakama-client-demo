@@ -44,6 +44,10 @@ export class lobby extends Component {
         director.loadScene("friend");
     }
 
+    onClickBtnToMatchScene(){
+        director.loadScene("match");
+    }
+
 
     // update (deltaTime: number) {
     //     // [4]
